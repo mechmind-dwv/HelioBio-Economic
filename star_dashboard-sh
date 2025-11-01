@@ -1,0 +1,5 @@
+# Iniciar la aplicación
+python app/main.py
+
+# Abrir en el navegador
+http://localhost:8000
