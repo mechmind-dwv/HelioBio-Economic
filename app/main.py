@@ -28,6 +28,7 @@ from app.core.kondratiev_analysis import KondratievAnalyzer
 from app.services.nasa_solar_service import NASASolarService
 from app.services.economic_data_service import EconomicDataService
 from app.services.correlation_service import CorrelationService
+from app.api import api_router
 
 # Configuración de logging
 logging.basicConfig(
@@ -47,6 +48,10 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
+)
+
+# Y esta línea después de la inicialización de FastAPI
+app.include_router(api_router, prefix="/api")
 )
 
 # CORS middleware
