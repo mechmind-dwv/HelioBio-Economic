@@ -1,0 +1,35 @@
+# FastAPI y servidor
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Procesamiento de datos
+pandas==2.1.3
+numpy==1.25.2
+scipy==1.11.3
+
+# Machine Learning
+scikit-learn==1.3.2
+tensorflow==2.14.0
+statsmodels==0.14.0
+
+# APIs y web
+requests==2.31.0
+aiohttp==3.9.1
+yfinance==0.2.18
+fredapi==0.5.0
+python-dotenv==1.0.0
+
+# Análisis de series temporales
+arch==6.2.0
+prophet==1.1.4
+
+# Utilidades
+matplotlib==3.8.0
+seaborn==0.13.0
+plotly==5.17.0
+jupyter==1.0.0
+
+# Logging y monitoreo
+structlog==23.2.0
+prometheus-client==0.17.1
