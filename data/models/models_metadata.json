@@ -1,0 +1,14 @@
+{
+  "random_forest_advanced": {
+    "name": "random_forest_advanced",
+    "trained_at": "2024-01-15T10:30:00",
+    "performance": {
+      "r2_score": 0.75,
+      "mse": 0.023,
+      "mae": 0.115,
+      "training_time_seconds": 45.2
+    },
+    "features": ["sunspots", "solar_flux", "SP500_lag_1", "GDP_growth"],
+    "file_path": "/path/to/random_forest_advanced.pkl"
+  }
+}
