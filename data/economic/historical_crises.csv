@@ -1,0 +1,7 @@
+crisis_name,start_date,end_date,severity,countries_affected,solar_cycle_phase
+Gran Depresión,1929-10-29,1939-12-31,Alta,Global,Máximo
+Crisis del Petróleo,1973-10-16,1975-03-31,Media,Global,Mínimo
+Lunes Negro,1987-10-19,1987-12-31,Moderada,Global,Máximo
+Burbuja Dot-com,2000-03-10,2002-10-09,Alta,Global,Máximo
+Crisis Financiera,2008-09-15,2009-06-30,Alta,Global,Mínimo
+COVID-19,2020-03-23,2020-12-31,Alta,Global,Ascendente
