@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌞 HelioBio-Economic v1.0</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --solar: #fbbf24;
+            --economic: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: var(--light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--solar);
+        }
+
+        .metric {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .metric.solar { color: var(--solar); }
+        .metric.economic { color: var(--economic); }
+        .metric.correlation { color: var(--success); }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .trend.up { color: var(--success); }
+        .trend.down { color: var(--danger); }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-healthy { background: var(--success); }
+        .status-warning { background: var(--warning); }
+        .status-error { background: var(--danger); }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light);
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid var(--solar);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 10px;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .correlation-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .correlation-item {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .correlation-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .high-correlation { color: var(--success); }
+        .medium-correlation { color: var(--warning); }
+        .low-correlation { color: var(--danger); }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+            .nav-tabs { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🌞 HelioBio-Economic</h1>
+            <p>Análisis de Correlación entre Ciclos Solares y Económicos</p>
+            <div class="status-badge status-healthy" id="systemStatus">
+                <i class="fas fa-circle"></i> Sistema Conectado
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="nav-tab" onclick="showTab('solar')">
+                <i class="fas fa-sun"></i> Datos Solares
+            </button>
+            <button class="nav-tab" onclick="showTab('economic')">
+                <i class="fas fa-chart-bar"></i> Datos Económicos
+            </button>
+            <button class="nav-tab" onclick="showTab('correlation')">
+                <i class="fas fa-link"></i> Correlaciones
+            </button>
+            <button class="nav-tab" onclick="showTab('predictions')">
+                <i class="fas fa-crystal-ball"></i> Predicciones
+            </button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="grid">
+                <!-- Solar Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Actividad Solar Actual</h3>
+                        <i class="fas fa-sun card-icon"></i>
+                    </div>
+                    <div class="metric solar" id="sunspotNumber">--</div>
+                    <p>Manchas Solares</p>
+                    <div class="trend" id="solarTrend">
+                        <i class="fas fa-arrow-up"></i> <span>Estable</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="solarActivityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Economic Indicators -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Indicadores Económicos</h3>
+                        <i class="fas fa-chart-line card-icon"></i>
+                    </div>
+                    <div class="metric economic" id="sp500Value">--</div>
+                    <p>S&P 500</p>
+                    <div class="trend" id="economicTrend">
+                        <i class="fas fa-arrow-up"></i> <span>Alcista</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="economicChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Correlation Strength -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Correlación Solar-Económica</h3>
+                        <i class="fas fa-link card-icon"></i>
+                    </div>
+                    <div class="metric correlation" id="correlationValue">--</div>
+                    <p>Coeficiente de Correlación</p>
+                    <div class="trend" id="correlationTrend">
+                        <i class="fas fa-info-circle"></i> <span>Análisis en tiempo real</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="correlationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Estado del Sistema</h3>
+                        <i class="fas fa-heart-pulse card-icon"></i>
+                    </div>
+                    <div id="systemHealth">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Cargando estado del sistema...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kondratiev Analysis -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Onda Kondratiev Actual</h3>
+                        <i class="fas fa-wave-square card-icon"></i>
+                    </div>
+                    <div id="kondratievInfo">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Analizando ciclos económicos...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Events -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Eventos Recientes</h3>
+                        <i class="fas fa-bell card-icon"></i>
+                    </div>
+                    <div id="recentEvents">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Monitoreando eventos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solar Data Tab -->
+        <div id="solar" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Datos Solares en Tiempo Real</h3>
+                    <i class="fas fa-satellite card-icon"></i>
+                </div>
+                <div id="solarData">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Conectando con NASA DONKI API...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Economic Data Tab -->
+        <div id="economic" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Indicadores Económicos</h3>
+                    <i class="fas fa-chart-pie card-icon"></i>
+                </div>
+                <div id="economicData">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Cargando datos económicos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Correlation Tab -->
+        <div id="correlation" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Análisis de Correlación</h3>
+                    <i class="fas fa-project-diagram card-icon"></i>
+                </div>
+                <div id="correlationAnalysis">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Calculando correlaciones...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Predictions Tab -->
+        <div id="predictions" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Predicciones Económicas</h3>
+                    <i class="fas fa-crystal-ball card-icon"></i>
+                </div>
+                <div id="predictionsData">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Generando predicciones...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
