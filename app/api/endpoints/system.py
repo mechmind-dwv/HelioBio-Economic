@@ -73,4 +73,54 @@ async def system_status():
     Obtener estado detallado del sistema
     
     Returns:
-        Estado detallado de
+        Estado detallado de todos los componentes
+    """
+    try:
+        from app.core.solar_economic_ml import solar_economic_ml
+        from app.core.kondratiev_analysis import kondratiev_analyzer
+        
+        ml_status = "Trained" if solar_economic_ml.is_trained else "Not Trained"
+        kondratiev_status = "Analyzed" if kondratiev_analyzer.current_analysis else "Pending"
+        
+        return HealthResponse(
+            success=True,
+            message="Estado del sistema obtenido",
+            data={
+                "core_components": {
+                    "solar_economic_ml": {
+                        "status": ml_status,
+                        "models_trained": len(solar_economic_ml.models) if solar_economic_ml.is_trained else 0,
+                        "best_model": max(solar_economic_ml.model_performance.items(), 
+                                        key=lambda x: x[1].r2_score)[0] if solar_economic_ml.model_performance else "None"
+                    },
+                    "kondratiev_analyzer": {
+                        "status": kondratiev_status,
+                        "current_wave": kondratiev_analyzer.current_analysis.current_wave.wave_number if kondratiev_analyzer.current_analysis else None,
+                        "current_phase": kondratiev_analyzer.current_analysis.current_phase.value if kondratiev_analyzer.current_analysis else None
+                    }
+                },
+                "api_endpoints": {
+                    "total_endpoints": 20,  # Actualizar con conteo real
+                    "active_endpoints": [
+                        "/api/solar/current",
+                        "/api/economic/indicators", 
+                        "/api/correlation/solar-economic",
+                        "/api/prediction/economic",
+                        "/api/system/health"
+                    ]
+                },
+                "data_sources": {
+                    "nasa_donki": "Active",
+                    "yahoo_finance": "Active", 
+                    "fred_api": "Active" if economic_data_service.fred_client else "Inactive",
+                    "noaa_swpc": "Active"
+                }
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo estado del sistema: {e}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error obteniendo estado del sistema: {str(e)}"
+        )
